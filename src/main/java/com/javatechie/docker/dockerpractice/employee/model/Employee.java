@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.Period;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,13 +16,17 @@ public class Employee {
     @Id
     @GeneratedValue
     private Integer id;
+    @Enumerated(EnumType.STRING)
+    private EmployeeRole role;
     //@Column
     private String name;
     private String email;
     private LocalDate dob;
     private Integer age;
-
+    private String mobileNo;
     private String departmentName;
+    private String userName;
+    private String password;
 
     @JoinColumn
     @OneToOne(cascade = CascadeType.ALL)

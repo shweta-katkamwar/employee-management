@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -64,6 +65,33 @@ public class EmployeeController {
         }
         Response<Employee> responseOfEmploye = new Response<>("Employee Created!", employee);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseOfEmploye);
+    }
+
+    @PutMapping("/employee/{id}")
+    public ResponseEntity<Object> updateEmployeeDetails(@RequestBody Employee employee, @PathVariable Integer id) {
+        employee.setId(id);
+        employee.calculateAge();
+        Employee updatedEmployee;
+        try {
+            updatedEmployee = employeeService.updateEmployeeDetails(employee);
+        } catch (EmployeeNotFoundException | DepartmentNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        Response<Employee> response = new Response<>("Details Updated", updatedEmployee);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PatchMapping("/employee/{id}")
+    public ResponseEntity<Object> partialUpdateEmployeeDetails(@PathVariable Integer id,
+                                                               @RequestBody Map<String, String> fields) {
+        Employee updatedEmployee;
+        try {
+            updatedEmployee = employeeService.partialUpdateEmployeeDetails(id, fields);
+        } catch (EmployeeNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        Response<Employee> response = new Response<>("Details Updated", updatedEmployee);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 }
