@@ -62,7 +62,7 @@ public class EmployeeController {
             Response<String> response = new Response<>(ex.getMessage(), "this is payload");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-        Response<Employee> responseOfEmploye = new Response<>("Employee Created", employee);
+        Response<Employee> responseOfEmploye = new Response<>("Employee Created!", employee);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseOfEmploye);
     }
 
