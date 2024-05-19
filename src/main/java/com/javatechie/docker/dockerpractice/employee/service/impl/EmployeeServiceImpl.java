@@ -79,11 +79,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     private void verifyDepartment(String departmentName) throws DepartmentNotFoundException {
-
         if (!departmentService.getAllDepartment().contains(departmentName)) {
             throw new DepartmentNotFoundException("Invalid department selected");
         }
 
     }
-
 }

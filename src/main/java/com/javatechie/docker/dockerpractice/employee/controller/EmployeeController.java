@@ -5,6 +5,7 @@ import com.javatechie.docker.dockerpractice.employee.exceptions.DepartmentNotFou
 import com.javatechie.docker.dockerpractice.employee.exceptions.EmployeeNotFoundException;
 import com.javatechie.docker.dockerpractice.employee.model.Employee;
 import com.javatechie.docker.dockerpractice.employee.service.EmployeeService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ public class EmployeeController {
     public ResponseEntity<List<Employee>> getAllEmployee() {
         //return employeeService.getAllEmployee();
         List<Employee> allEmployee = employeeService.getAllEmployee();
+        //allEmployee.get(0).setName("Hacked");
         return ResponseEntity.status(HttpStatus.OK).body(allEmployee);
     }
 
@@ -48,11 +50,12 @@ public class EmployeeController {
 //         return ResponseEntity.status(HttpStatus.OK).body(response);
 
         return ResponseEntity.status(HttpStatus.OK).body(employeeById);
+
     }
 
     @PostMapping("/employee")
     //public ResponseEntity<Employee> addNewEmployee(@RequestBody Employee emp) {
-    public ResponseEntity<Object> addNewEmployee(@RequestBody Employee emp) {
+    public ResponseEntity<Object> addNewEmployee(@RequestBody @Valid Employee emp) {
         //return  employeeService.addNewEmployee(emp);
         emp.calculateAge();
         Employee employee;
@@ -64,6 +67,7 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
         Response<Employee> responseOfEmploye = new Response<>("Employee Created!", employee);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(responseOfEmploye);
     }
 
