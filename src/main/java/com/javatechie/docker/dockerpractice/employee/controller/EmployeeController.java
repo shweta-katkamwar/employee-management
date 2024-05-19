@@ -5,6 +5,7 @@ import com.javatechie.docker.dockerpractice.employee.exceptions.DepartmentNotFou
 import com.javatechie.docker.dockerpractice.employee.exceptions.EmployeeNotFoundException;
 import com.javatechie.docker.dockerpractice.employee.model.Employee;
 import com.javatechie.docker.dockerpractice.employee.service.EmployeeService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ public class EmployeeController {
     public ResponseEntity<List<Employee>> getAllEmployee() {
         //return employeeService.getAllEmployee();
         List<Employee> allEmployee = employeeService.getAllEmployee();
+        //allEmployee.get(0).setName("Hacked");
         return ResponseEntity.status(HttpStatus.OK).body(allEmployee);
     }
 
@@ -48,11 +50,12 @@ public class EmployeeController {
 //         return ResponseEntity.status(HttpStatus.OK).body(response);
 
         return ResponseEntity.status(HttpStatus.OK).body(employeeById);
+
     }
 
     @PostMapping("/employee")
     //public ResponseEntity<Employee> addNewEmployee(@RequestBody Employee emp) {
-    public ResponseEntity<Object> addNewEmployee(@RequestBody Employee emp) {
+    public ResponseEntity<Object> addNewEmployee(@RequestBody @Valid Employee emp) {
         //return  employeeService.addNewEmployee(emp);
         emp.calculateAge();
         Employee employee;
@@ -64,6 +67,7 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
         Response<Employee> responseOfEmploye = new Response<>("Employee Created!", employee);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(responseOfEmploye);
     }
 
@@ -74,8 +78,17 @@ public class EmployeeController {
         Employee updatedEmployee;
         try {
             updatedEmployee = employeeService.updateEmployeeDetails(employee);
-        } catch (EmployeeNotFoundException | DepartmentNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (EmployeeNotFoundException ex) {
+//            throw new RuntimeException(ex);
+            log.error("employee doesn't exist");
+            Response response = new Response("Employee doesn't exist",
+                    "Existing employees only can be updated");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } catch (DepartmentNotFoundException ex) {
+            log.error("Incorrect department added");
+            Response response = new Response(employee.getDepartmentName(),
+                    "is not valid department");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
         Response<Employee> response = new Response<>("Details Updated", updatedEmployee);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -87,8 +100,10 @@ public class EmployeeController {
         Employee updatedEmployee;
         try {
             updatedEmployee = employeeService.partialUpdateEmployeeDetails(id, fields);
-        } catch (EmployeeNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (EmployeeNotFoundException ex) {
+            log.error("Not an existing employee");
+            Response response = new Response("id : " + id, "Not exists");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
         Response<Employee> response = new Response<>("Details Updated", updatedEmployee);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

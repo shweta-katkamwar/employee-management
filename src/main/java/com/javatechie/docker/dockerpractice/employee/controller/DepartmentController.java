@@ -32,5 +32,4 @@ public class DepartmentController {
         Department departmentResponse = departmentService.createDepartment(department);
         return ResponseEntity.status(HttpStatus.CREATED).body(departmentResponse);
     }
-
 }

@@ -53,6 +53,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new EmployeeNotFoundException("Employee not present");
         }
         verifyDepartment(employee.getDepartmentName());
+        employee.getAddress().setAddressId(employeeOptional.get().getAddress().getAddressId());
         return employeeRepository.save(employee);
     }
 
@@ -78,11 +79,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     private void verifyDepartment(String departmentName) throws DepartmentNotFoundException {
-
         if (!departmentService.getAllDepartment().contains(departmentName)) {
             throw new DepartmentNotFoundException("Invalid department selected");
         }
 
     }
-
 }
