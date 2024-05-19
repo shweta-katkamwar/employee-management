@@ -74,8 +74,17 @@ public class EmployeeController {
         Employee updatedEmployee;
         try {
             updatedEmployee = employeeService.updateEmployeeDetails(employee);
-        } catch (EmployeeNotFoundException | DepartmentNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (EmployeeNotFoundException ex) {
+//            throw new RuntimeException(ex);
+            log.error("employee doesn't exist");
+            Response response = new Response("Employee doesn't exist",
+                    "Existing employees only can be updated");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } catch (DepartmentNotFoundException ex) {
+            log.error("Incorrect department added");
+            Response response = new Response(employee.getDepartmentName(),
+                    "is not valid department");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
         Response<Employee> response = new Response<>("Details Updated", updatedEmployee);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -87,8 +96,10 @@ public class EmployeeController {
         Employee updatedEmployee;
         try {
             updatedEmployee = employeeService.partialUpdateEmployeeDetails(id, fields);
-        } catch (EmployeeNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (EmployeeNotFoundException ex) {
+            log.error("Not an existing employee");
+            Response response = new Response("id : " + id, "Not exists");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
         Response<Employee> response = new Response<>("Details Updated", updatedEmployee);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

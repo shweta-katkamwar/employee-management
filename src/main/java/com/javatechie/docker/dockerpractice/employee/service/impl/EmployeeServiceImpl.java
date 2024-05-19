@@ -53,6 +53,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new EmployeeNotFoundException("Employee not present");
         }
         verifyDepartment(employee.getDepartmentName());
+        employee.getAddress().setAddressId(employeeOptional.get().getAddress().getAddressId());
         return employeeRepository.save(employee);
     }
 
