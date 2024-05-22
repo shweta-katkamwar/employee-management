@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -20,19 +21,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     //private final EmployeeStub employeeStub;
 
     //@Autowired
-    private final EmployeeRepository repository;
+    private final EmployeeRepository employeeRepository;
 
     private DepartmentService departmentService;
 
     public List<Employee> getAllEmployee() {
         //    return employeeStub.getAllEmployeeData();
-        return repository.findAll();
+        return employeeRepository.findAll();
     }
 
     public Employee getEmployeeById(Integer id) throws EmployeeNotFoundException {
         //return employeeStub.getEmployeeById(id);
 
-        Optional<Employee> employeeById = repository.findById(id);
+        Optional<Employee> employeeById = employeeRepository.findById(id);
 
         if (employeeById.isPresent()) {
             return employeeById.get();
@@ -41,13 +42,43 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     public Employee addNewEmployee(Employee emp) throws DepartmentNotFoundException {
-        verifyDepartment(emp);
-        return repository.save(emp);
+        verifyDepartment(emp.getDepartmentName());
+        return employeeRepository.save(emp);
     }
 
-    public void verifyDepartment(Employee emp) throws DepartmentNotFoundException {
-        String departmentName = emp.getDepartmentName();
+    @Override
+    public Employee updateEmployeeDetails(Employee employee) throws EmployeeNotFoundException, DepartmentNotFoundException {
+        Optional<Employee> employeeOptional = employeeRepository.findById(employee.getId());
+        if (!employeeOptional.isPresent()) {
+            throw new EmployeeNotFoundException("Employee not present");
+        }
+        verifyDepartment(employee.getDepartmentName());
+        employee.getAddress().setAddressId(employeeOptional.get().getAddress().getAddressId());
+        return employeeRepository.save(employee);
+    }
 
+    @Override
+    public Employee partialUpdateEmployeeDetails(Integer id, Map<String, String> fields) throws EmployeeNotFoundException {
+        Optional<Employee> employeeOptional = employeeRepository.findById(id);
+        if (!employeeOptional.isPresent()) {
+            throw new EmployeeNotFoundException("Employee not present");
+        }
+        Employee updatedEmployee = employeeOptional.get();
+        for (Map.Entry<String, String> field : fields.entrySet()) {
+            if (field.getKey().equals("mobileNo")) {
+                updatedEmployee.setMobileNo(field.getValue());
+            }
+            if (field.getKey().equals("name")) {
+                employeeOptional.get().setName(field.getValue());
+            }
+
+        }
+        return employeeRepository.save(updatedEmployee);
+//        verifyDepartment(employee.);
+
+    }
+
+    private void verifyDepartment(String departmentName) throws DepartmentNotFoundException {
         if (!departmentService.getAllDepartment().contains(departmentName)) {
             throw new DepartmentNotFoundException("Invalid department selected");
         }
