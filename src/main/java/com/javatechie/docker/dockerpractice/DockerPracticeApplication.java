@@ -4,10 +4,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+//@EnableSwagger2
 public class DockerPracticeApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(DockerPracticeApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(DockerPracticeApplication.class, args);
+    }
 
 }

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 public class Demo {
 
-
     public Demo(MyDemo myDemo) {
+
         System.out.println("Inside Demo Constructor..!!!");
         System.out.println("Testing for git repositories..!!!");
         System.out.println("Testing for git pull..!!!");
@@ -16,6 +16,7 @@ public class Demo {
 
     public static void main(String[] args) {
         new Demo().printR(5);
+        Demo d = new Demo(null);
     }
 
     private void printR(int n) {
